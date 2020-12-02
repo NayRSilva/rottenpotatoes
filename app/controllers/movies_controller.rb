@@ -6,6 +6,19 @@ class MoviesController < ApplicationController
     params[:sort_by] = %w{title release_date}.include?(params[:sort_by])? params[:sort_by] : "title"
     # puts "ola"+ ("#{params[:sort_by]}")
     @movies = Movie.order("#{params[:sort_by]}")
+    @all_ratings = Movie.all_ratings
+    if params[:ratings].blank?
+      params[:ratings]= @all_ratings
+    else
+      puts"aui"
+      puts params[:ratings].keys
+      # @movies = SELECT * FROM movies WHERE (movies.rating IN  "#{params[:ratings]}")
+      @movies = Movie.where(rating: params[:ratings].keys)
+      # @movies= Movie.find_each(:rating => params[:ratings])
+    end
+      
+      
+    # @movies= Movie.where(rating: params[:rating])
   end
 
   def show
@@ -25,7 +38,7 @@ class MoviesController < ApplicationController
   end
 
   def movie_params
-    params.require(:movie).permit(:title,:rating,:description,:release_date)
+    params.require(:movie).permit(:title,:rating,:ratings,:description,:release_date)
   end
 
   def edit
